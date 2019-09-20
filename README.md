@@ -2,8 +2,8 @@
 
 # Xee
 <p align="center">
-        <img src="logo_xee.png" alt="PNG" height="180px" />
-         <img src="logo_ha.png" alt="PNG" height="180px" />
+        <img src="res/logo_xee.png" alt="PNG" height="180px" />
+         <img src="res/logo_ha.png" alt="PNG" height="180px" />
 </p>
 
 ## Requirements
@@ -14,7 +14,7 @@
 
 ## Example
 <p align="center">
-        <img src="example.png" alt="PNG" height="720px" />
+        <img src="res/example.png" alt="PNG" height="720px" />
 </p>
 
 
