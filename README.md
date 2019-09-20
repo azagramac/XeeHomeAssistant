@@ -9,8 +9,8 @@
 ## Requirements
 - Home Assistant installed and configured on your server
 - Device "**[XeeConnect](https://www.midas.es/midas-connect)**" installed and configured in your car
-
-
+- Get the Google Maps token, [click here](https://console.cloud.google.com/home)
+- Official documentation of API v4 [XeeDev](https://doc.xee.com)
 
 ## Example
 <p align="center">

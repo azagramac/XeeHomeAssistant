@@ -15,11 +15,11 @@ script: !include scripts.yaml
 
 sensor:
   - platform: rest
-    resource: https://api.xee.com/v4/vehicles/{{carId}}/status
+    resource: https://api.xee.com/v4/vehicles/{{ carId }}/status
     method: GET
     name: audi_data
     headers:
-      Authorization: Bearer {{accessToken}}
+      Authorization: Bearer {{ accessToken }}
     json_attributes:
       - signals
       - location
@@ -80,7 +80,7 @@ group:
     - group.car_stats_view
   car_stats_view:
     control: hidden
-    name: {{nameCar}}
+    name: {{ nameCar }}
     entities:
       - sensor.car_lock
       - sensor.car_speed
@@ -122,4 +122,4 @@ homeassistant:
 
 camera:
   platform: generic
-  still_image_url: https://maps.googleapis.com/maps/api/staticmap?center={{ states.sensor.audi_data.attributes.location.latitude }},{{ states.sensor.audi_data.attributes.location.longitude }}&zoom=18&size=500x500&maptype=roadmap&markers=color:blue%7Clabel:P%7C{{ states.sensor.audi_data.attributes.location.latitude }},{{ states.sensor.audi_data.attributes.location.longitude }}&key={{googleToken}}
+  still_image_url: https://maps.googleapis.com/maps/api/staticmap?center={{ states.sensor.audi_data.attributes.location.latitude }},{{ states.sensor.audi_data.attributes.location.longitude }}&zoom=18&size=500x500&maptype=roadmap&markers=color:blue%7Clabel:P%7C{{ states.sensor.audi_data.attributes.location.latitude }},{{ states.sensor.audi_data.attributes.location.longitude }}&key={{ googleToken }}
