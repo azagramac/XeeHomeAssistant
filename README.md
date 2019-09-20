@@ -14,7 +14,7 @@
 
 ## Example
 <p align="center">
-        <img src="res/example.png" alt="PNG" height="720px" />
+        <img src="res/example.png" alt="PNG" height="795px" />
 </p>
 
 
