@@ -1,0 +1,125 @@
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+# http:
+#   base_url: example.duckdns.org:8123
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+
+sensor:
+  - platform: rest
+    resource: https://api.xee.com/v4/vehicles/{{carId}}/status
+    method: GET
+    name: audi_data
+    headers:
+      Authorization: Bearer {{accessToken}}
+    json_attributes:
+      - signals
+      - location
+      - updatedAt
+    value_template: '' 
+    scan_interval: 30
+  - platform: template
+    sensors:
+      car_battery:
+        friendly_name: 'Battery'
+        value_template: '{{ states.sensor.audi_data.attributes.signals[2].value }}'
+        unit_of_measurement: 'V'
+      car_lock:
+        friendly_name: 'Lock'
+        value_template: >-
+          {% if states.sensor.audi_data.attributes.signals[12].value == 1 %}
+            Locked
+          {% else %}
+            Unlocked
+          {% endif %}
+      car_speed:
+        friendly_name: 'Speed'
+        value_template: '{{ states.sensor.audi_data.attributes.signals[16].value }}'
+        unit_of_measurement: 'Km/h'
+      car_fuel:
+        friendly_name: 'Fuel'
+        value_template: '{{ states.sensor.audi_data.attributes.signals[8].value }}'
+        unit_of_measurement: 'L'
+      car_pressure:
+        friendly_name: 'Temp outside'
+        value_template: '{{ states.sensor.audi_data.attributes.signals[15].value }}'
+        unit_of_measurement: 'º'
+      car_total_km:
+        friendly_name: 'Total Km'
+        value_template: '{{ states.sensor.audi_data.attributes.signals[13].value }}'
+        unit_of_measurement: 'km'
+      car_engine_state:
+        friendly_name: 'Engine State'
+        value_template: '{{ states.sensor.audi_data.attributes.signals[10].value }}'
+        unit_of_measurement: 'rpm'
+      car_update_date:
+        friendly_name: 'Update Date'
+        value_template: "{{ states.sensor.audi_data.attributes.updatedAt | timestamp_custom('%D %-I:%M %P') }}"
+      car_latitude:
+        friendly_name: 'Latitude'
+        value_template: '{{ states.sensor.audi_data.attributes.location.latitude }}'
+      car_longitude:
+        friendly_name: 'Longitude'
+        value_template: '{{ states.sensor.audi_data.attributes.location.longitude }}'
+
+group:
+  car_view:
+    view: yes
+    name: Car
+    icon: mdi:car
+    entities:
+    - camera.audi_a4_location
+    - group.car_stats_view
+  car_stats_view:
+    control: hidden
+    name: {{nameCar}}
+    entities:
+      - sensor.car_lock
+      - sensor.car_speed
+      - sensor.car_fuel
+      - sensor.car_battery
+      - sensor.car_pressure
+      - sensor.car_total_km
+      - sensor.car_update_date
+      - sensor.car_engine_state
+      - sensor.car_latitude
+      - sensor.car_longitude
+
+homeassistant:
+  customize:
+    sensor.car_battery:
+      icon: mdi:car-battery
+    sensor.car_lock:
+      icon: mdi:lock
+    sensor.car_speed:
+      icon: mdi:speedometer
+    sensor.car_fuel:
+      icon: mdi:gas-station
+    sensor.car_pressure:
+      icon: mdi:temperature-celsius
+    sensor.car_total_km:
+      icon: mdi:arrow-right-bold
+    sensor.car_update_date:
+      icon: mdi:car-connected
+    sensor.car_update_date:
+      icon: mdi:car-connected
+    sensor.car_engine_state:
+      icon: mdi:engine
+    sensor.car_latitude:
+      icon: mdi:satellite-variant
+    sensor.car_longitude:
+      icon: mdi:satellite-variant
+    group.car_view:
+      order: 3
+
+camera:
+  platform: generic
+  still_image_url: https://maps.googleapis.com/maps/api/staticmap?center={{ states.sensor.audi_data.attributes.location.latitude }},{{ states.sensor.audi_data.attributes.location.longitude }}&zoom=18&size=500x500&maptype=roadmap&markers=color:blue%7Clabel:P%7C{{ states.sensor.audi_data.attributes.location.latitude }},{{ states.sensor.audi_data.attributes.location.longitude }}&key={{googleToken}}
